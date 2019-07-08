@@ -38,6 +38,7 @@ if ($fieldname == "verkkolasku_lah") {
   $sel9 = "";
   $selA = "";
   $selB = "";
+  $selC = "";
 
   if ($trow[$i] == 'iPost') {
     $sel3 = "selected";
@@ -69,6 +70,9 @@ if ($fieldname == "verkkolasku_lah") {
   elseif ($trow[$i] == 'arvato') {
     $selB = "selected";
   }
+  elseif ($trow[$i] == 'fitek') {
+    $selC = "selected";
+  }
   else {
     $sel1 = "selected";
   }
@@ -84,6 +88,7 @@ if ($fieldname == "verkkolasku_lah") {
   $ulos .= "<option value = 'sepa' $sel9>".t("SEPA-pankkiyhteys");
   $ulos .= "<option value = 'talenom' $selA>".t("Talenom Myyntilaskutuspalvelu");
   $ulos .= "<option value = 'arvato' $selB>".t("Arvato Laskutuspalvelu");
+  $ulos .= "<option value = 'fitek' $selC>".t("Fitek-verkkolaskut");
   $ulos .= "</select></td>";
 
   $jatko = 0;
@@ -2656,6 +2661,21 @@ if ($fieldname == "myyntitilauksen_liitteet") {
   $jatko = 0;
 }
 
+if ($fieldname == "asiakasmyyja_tilaukselle") {
+
+  $ulos = "<td><select name='$nimi' ".js_alasvetoMaxWidth($nimi, 400).">";
+
+  $sel = array();
+  $apu = $trow[$i];
+  $sel[$apu] = "SELECTED";
+
+  $ulos .= "<option value = ''>".t("K‰ytet‰‰n ensisijaisesti tilauksen laatijaa myyj‰n‰")."</option>";
+  $ulos .= "<option value = 'A' $sel[A]>".t("K‰ytet‰‰n ensisijaisesti asiakkaan myyj‰‰ myyj‰n‰")."</option>";
+  $ulos .= "</select></td>";
+
+  $jatko = 0;
+}
+
 if ($fieldname == "myyntitilauksen_toimipaikka") {
 
   $ulos = "<td><select name='$nimi' ".js_alasvetoMaxWidth($nimi, 400).">";
@@ -3423,10 +3443,12 @@ if ($fieldname == "extranet_tilaus_varaa_saldoa") {
 if ($fieldname == "extranet_nayta_saldo") {
   $ulos = "<td><select name='$nimi' " . js_alasvetoMaxWidth($nimi, 400) . ">";
 
-  $sel = $trow[$i] == 'Y' ? ' selected' : '';
+  $selY = $trow[$i] == 'Y' ? ' selected' : '';
+  $selX = $trow[$i] == 'X' ? ' selected' : '';
 
   $ulos .= "<option value = ''>" . t("Ei n‰ytet‰ saldoa extranetiss‰");
-  $ulos .= "<option value = 'Y' $sel>" . t("N‰ytet‰‰n saldo extranetiss‰");
+  $ulos .= "<option value = 'Y' $selY>" . t("N‰ytet‰‰n saldo extranetin tuotehaussa");
+  $ulos .= "<option value = 'X' $selX>" . t("N‰ytet‰‰n saldo extranetiss‰");
   $ulos .= "</select></td>";
 
   $jatko = 0;
@@ -4557,7 +4579,7 @@ if ($fieldname == 'ennakkolasku_myyntitilaukselta') {
 
   $ulos .= "<option value = ''>".t("Myyntitilauksella ei voi tehd‰ ennakkolaskua pikan‰pp‰imell‰")."</option>";
   $ulos .= "<option value = 'A' {$sel['A']}>".t("Myyntitilauksella voi tehd‰ ennakkolaskun pikan‰pp‰imell‰")."</option>";
-  $ulos .= "<option value = 'B' {$sel['B']}>".t("Myyntitilauksella voi tehd‰ ennakkolaskun ja sis‰isen ennakklaskun pikan‰pp‰imell‰")."</option>";
+  $ulos .= "<option value = 'B' {$sel['B']}>".t("Myyntitilauksella voi tehd‰ ennakkolaskun ja sis‰isen ennakkolaskun pikan‰pp‰imell‰")."</option>";
   $ulos .= "</select></td>";
 
   $jatko = 0;

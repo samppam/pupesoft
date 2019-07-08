@@ -210,7 +210,7 @@ $tilausrivin_kateraja = $yhtiorow["tilausrivin_kateraja"];
 $tilausrivin_kate = laske_tilausrivin_kate($row, $kotisumma_alviton, $row["kehahin"], $kpl, $arow);
 
 if ($tilausrivin_kateraja > 0 and
-  $tilausrivin_kate < $tilausrivin_kateraja and $row["var2"] != "OK"
+  $tilausrivin_kate < $tilausrivin_kateraja and $row["var2"] != "OK" and $row["tyyppi"] != "G"
 ) {
   $varaosavirhe .= t("HUOM: Kate alhainen!")."<br>";
   $riviok++;
@@ -338,6 +338,12 @@ if (!in_array($row["var"], array('', 'P', 'J', 'H', 'S', 'T', 'U', 'V', 'A', 'B'
 
 if (in_array($row["tyyppi"], array('V', 'W')) and $row["perheid"] == 0 and $toim == "VALMISTAVARASTOON") {
   $varaosavirhe .= t("VIRHE: Tuote ei kuulu mihink‰‰n reseptiin!")."<br>";
+  $riviok++;
+  $tilausok++;
+}
+
+if ($row["var"] == "O" and in_array($toim, array('PIKATILAUS', 'RIVISYOTTO')) and $kukarow["extranet"] == "") {
+  $varaosavirhe .= t("VIRHE: Myyntitilauksella Var ei voi olla O!")."<br>";
   $riviok++;
   $tilausok++;
 }

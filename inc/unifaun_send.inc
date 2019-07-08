@@ -443,7 +443,7 @@ class Unifaun {
     $uni_par_val->addAttribute('n', "custno");
 
     // DPDFI (PostNord DPD Classic) keississä laitetaan vähän extraa
-    if ($this->toitarow['rahdinkuljettaja'] == 'DPDFI') {
+    if ($this->toitarow['rahdinkuljettaja'] == 'DPDFI' or $this->toitarow['rahdinkuljettaja'] == 'PLSCM') {
       $uni_par_val = $uni_sender_partner->addChild('val', "Z14");   // custnoissuercode
       $uni_par_val->addAttribute('n', "custnoissuercode");
     }
@@ -555,6 +555,7 @@ class Unifaun {
         'MH10_SPTR',
         'MH30_SPTR',
         'P83FI',
+        'SBTLFIEXP',
       );
 
       $allowed_opay = array(
@@ -616,8 +617,21 @@ class Unifaun {
     $uni_rcv_val = $uni_receiver->addChild('val', utf8_encode($this->rakir_row["toim_postino"])); // Zipcode
     $uni_rcv_val->addAttribute('n', "zipcode");
 
+    if ($toim_maa == "FI") {
+      list($_postinomaa, $_postino) = explode("-", $this->rakir_row["toim_postino"]);
+    }
+    else {
+      $_postinomaa = '';
+    }
+
+    if ($_postinomaa == "AX") { 
+      $toim_maa = "AX";
+    }
+    else {
+      // jos asiakkaan toim_maa on tyhjä niin oletetaan, että se on sama ku yhtiön maa
+      $toim_maa = ($this->rakir_row['toim_maa'] != "") ? $this->rakir_row['toim_maa'] : $this->postirow["yhtio_maa"];
+    }
     // jos asiakkaan toim_maa on tyhjä niin oletetaan, että se on sama ku yhtiön maa
-    $toim_maa = ($this->rakir_row['toim_maa'] != "") ? $this->rakir_row['toim_maa'] : $this->postirow["yhtio_maa"];
 
     if ($toim_maa == "US") {
 
@@ -697,9 +711,15 @@ class Unifaun {
     //$uni_par_val = $uni_receiver_partner->addChild('val', "");   # Agent's identity, mandatory value for DBSchenker PrivPak. Normally set by application.
     //$uni_par_val->addAttribute('n', "agentno");
 
-    // Käytetään vastaanottajan rahtisopimusta: toimitusosoite on eri kuin rahtisopåimuksen omistaja ->
-    // kerrotaan Unifaunille myös rahtisopimuksen omistajajn tiedot
-    if ($this->rakir_row['merahti'] == "" and $this->rakir_row["toim_nimi"] != $this->rakir_row["nimi"] and $this->toitarow["virallinen_selite"] == "POF1") {
+    // Käytetään vastaanottajan rahtisopimusta: rahdinmaksajan tiedot aina ilmoitttava sanomalla
+    $_nimi = utf8_encode($this->rakir_row["nimi"]);
+    $_nimitark = utf8_encode($this->rakir_row["nimitark"]);
+    $_osoite = utf8_encode($this->rakir_row["osoite"]);
+    $_toim_osoite = utf8_encode($this->rakir_row["toim_osoite"]);
+    
+    if ($this->rakir_row['merahti'] == "" and ($this->toitarow["virallinen_selite"] == "POF1"
+      or $this->toitarow["virallinen_selite"] == "SBTLFIEXP") 
+      and ($_nimi != $_toim_nimi or $_nimitark != $_toim_nimitark or $_osoite != $_toim_osoite)) {
       $uni_party = $xml->addChild('party');  // Any contents. Mandatory.
 
       $uni_party->addAttribute('ptyid', utf8_encode($this->asiakasrow["tunnus"]));
@@ -746,7 +766,8 @@ class Unifaun {
     $uni_shi_val = $uni_shipment->addChild('val', utf8_encode($this->asiakasrow["tunnus"])); // Defines the receiver. Refers to rcvid value for receiver.
     $uni_shi_val->addAttribute('n', "to");
 
-    if ($this->rakir_row["toim_nimi"] != $this->rakir_row["nimi"] and $this->toitarow['virallinen_selite'] == 'POF1') {
+    if ($this->rakir_row['merahti'] == "" and ($this->toitarow['virallinen_selite'] == 'POF1'
+       or $this->toitarow["virallinen_selite"] == "SBTLFIEXP")) {
       $uni_shi_val = $uni_shipment->addChild('val', utf8_encode($shipment_payer)); // Defines the receiver. Refers to rcvid value for receiver.
       $uni_shi_val->addAttribute('n', "payerfreight");
     }

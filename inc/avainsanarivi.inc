@@ -295,6 +295,7 @@ if (mysql_field_name($result, $i) == "laji") {
   if ($lukitse_laji== "" or $lukitse_laji == "JAKELULISTA") $ulos .= "<option value='JAKELULISTA' $avain_sel[JAKELULISTA]>".t("Email jakelulista")."</option>";
   if ($lukitse_laji== "" or $lukitse_laji == "LUETTELO") $ulos .= "<option value='LUETTELO' $avain_sel[LUETTELO]>".t("Luettelotyyppi")."</option>";
   if ($lukitse_laji== "" or $lukitse_laji == "TRIVITYYPPI") $ulos .= "<option value='TRIVITYYPPI' $avain_sel[TRIVITYYPPI]>".t("Tilausrivin tyyppi")."</option>";
+  if ($lukitse_laji== "" or $lukitse_laji == "TILRIVI_VIILAUS") $ulos .= "<option value='TILRIVI_VIILAUS' $avain_sel[TILRIVI_VIILAUS]>".t("Tilausrivin ulkoasun muutos")."</option>";
   if ($lukitse_laji== "" or $lukitse_laji == "LASKUTUS_SAATE") $ulos .= "<option value='LASKUTUS_SAATE' $avain_sel[LASKUTUS_SAATE]>".t("Laskun sähköpostisaatekirje asiakkaalle")."</option>";
   if ($lukitse_laji== "" or $lukitse_laji == "PALAUTUS_SAATE") $ulos .= "<option value='PALAUTUS_SAATE' $avain_sel[PALAUTUS_SAATE]>".t("Palautuksen sähköpostisaatekirje asiakkaalle")."</option>";
   if ($lukitse_laji== "" or $lukitse_laji == "TV_LISATIETO") $ulos .= "<option value='TV_LISATIETO' $avain_sel[TV_LISATIETO]>".t("Tilausvahvistuksen lisätiedot")."</option>";
@@ -342,6 +343,10 @@ if (mysql_field_name($result, $i) == "laji") {
   if ($lukitse_laji== "" or $lukitse_laji == "MESSENGER_RYHMA") $ulos .= "<option value='MESSENGER_RYHMA' {$avain_sel['MESSENGER_RYHMA']}>".t("Messenger käyttäjäryhmä")."</option>";
   if ($lukitse_laji== "" or $lukitse_laji == "VALM_FAKTA") $ulos .= "<option value='VALM_FAKTA' {$avain_sel['VALM_FAKTA']}>".t("Valmistuslistan faktan fonttikoko")."</option>";
   if ($lukitse_laji== "" or $lukitse_laji == "PSHOP_SYNONYMS") $ulos .= "<option value='PSHOP_SYNONYMS' {$avain_sel['PSHOP_SYNONYMS']}>".t("Pupeshop tuotehaun synonyymit")."</option>";
+  if ($lukitse_laji== "" or $lukitse_laji == "VASTUUMYYJA") $ulos .= "<option value='VASTUUMYYJA' {$avain_sel['VASTUUMYYJA']}>".t("Asiakkaan vastuumyyjä")."</option>";
+  if ($lukitse_laji== "" or $lukitse_laji == "MAKSUKP") $ulos .= "<option value='MAKSUKP' {$avain_sel['MAKSUKP']}>".t("Maksatuksessa kustannuspaikka")."</option>";
+  if ($lukitse_laji== "" or $lukitse_laji == "MAKSUMS") $ulos .= "<option value='MAKSUMS' {$avain_sel['MAKSUMS']}>".t("Maksuteksti näkyviin avoimissa myyntilaskuissa")."</option>";
+  if ($lukitse_laji== "" or $lukitse_laji == "MYYNTITILASTO") $ulos .= "<option value='MYYNTITILASTO' {$avain_sel['MYYNTITILASTO']}>".t("Myyntimittarin raja-arvot")."</option>";
 
   if ($lukitse_laji== "") $ulos .= "</optgroup>";
 
@@ -1719,6 +1724,65 @@ if ($avain_sel['UNIFAUN_REF'] == 'SELECTED') {
     $ulos .= "<select name='{$nimi}'>";
     $ulos .= "<option value='viesti'>" . t('Tilausviite') . "</option>";
     $ulos .= "<option value='tunnus' {$sel}>" . t('Tilausnumero') . "</option>";
+    $ulos .= "</select>";
+    $ulos .= "</td>";
+
+    $jatko = 0;
+  }
+}
+// Missä vastuumyyjä näytetään
+if ($avain_sel['VASTUUMYYJA'] == "SELECTED") {
+  // ei näytetä selitetarkia tai järjestystä
+  if ($_selitetark or $_jarjestys) {
+    $tyyppi = 0;
+  }
+
+  if ($_selite) {
+    $sel = $trow[$i] == 'tunnus' ? 'selected' : '';
+
+    $ulos = "<td>";
+    $ulos .= "<select name='{$nimi}'>";
+    $ulos .= "<option value='Asiakashaku'>" . t('Asiakashaku') . "</option>";
+    $ulos .= "<option value='Tulosteet' {$sel}>" . t('Tulosteet') . "</option>";
+    $ulos .= "</select>";
+    $ulos .= "</td>";
+
+    $jatko = 0;
+  }
+}
+if ($avain_sel["MAKSUKP"] == "SELECTED") {
+  // ei näytetä selitetarkia tai järjestystä
+  if ($_selitetark or $_jarjestys) {
+    $tyyppi = 0;
+  }
+
+  if ($_selite) {
+    $sel = $trow[$i] == 'Kylla' ? 'selected' : '';
+
+    $ulos = "<td>";
+    $ulos .= "<select name='{$nimi}'>";
+    $ulos .= "<option value='Ei'>" . t('Ei') . "</option>";
+    $ulos .= "<option value='Kylla' {$sel}>" . t('Kyllä') . "</option>";
+    $ulos .= "</select>";
+    $ulos .= "</td>";
+
+    $jatko = 0;
+  }
+}
+
+if ($avain_sel["MAKSUMS"] == "SELECTED") {
+  // ei näytetä selitetarkia tai järjestystä
+  if ($_selitetark or $_jarjestys) {
+    $tyyppi = 0;
+  }
+
+  if ($_selite) {
+    $sel = $trow[$i] == 'Kylla' ? 'selected' : '';
+
+    $ulos = "<td>";
+    $ulos .= "<select name='{$nimi}'>";
+    $ulos .= "<option value='Ei'>" . t('Ei') . "</option>";
+    $ulos .= "<option value='Kylla' {$sel}>" . t('Kyllä') . "</option>";
     $ulos .= "</select>";
     $ulos .= "</td>";
 
